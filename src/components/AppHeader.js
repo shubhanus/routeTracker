@@ -1,12 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import TouchableIcon from "./TouchableIcon";
-import StatusBar from "./CustomStatusBar";
 
 const AppHeader = ({ title }) => {
   return (
     <>
-      {/* <StatusBar /> */}
       <View style={styles.container}>
         <View style={styles.leftWrapper}>
           <TouchableIcon name="menu" />
