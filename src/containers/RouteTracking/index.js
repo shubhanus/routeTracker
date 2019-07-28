@@ -12,33 +12,45 @@ import Interactable from "react-native-interactable";
 import AppHeader from "../../components/AppHeader";
 import Map from "./Map";
 
+const CARD_HEIGHT = 150; // can be fixed or calculated on layout
+const HEADER_HEIGHT = 48; // based on header height
+const cards = [
+  { title: "1" },
+  { title: "2" },
+  { title: "3" },
+  { title: "4" },
+  { title: "5" },
+  { title: "6" },
+  { title: "7" },
+  { title: "8" },
+  { title: "9" }
+  // { title: "10" }
+];
+
 const Screen = {
   width: Dimensions.get("window").width,
-  height: Dimensions.get("window").height - 75
+  height: Dimensions.get("window").height - HEADER_HEIGHT
 };
 
+const otherSnapPoints = []; // will be used to snap drag
 const MapPanel = () => {
-  const [deltaY] = useState(new Animated.Value(Screen.height - 100));
-  const [scrollEnabled, setScrollEnabled] = useState(false);
-  // const [wrapperHeight, setWrapperHeight] = useState("auto");
-  // const wapperRef = useRef(null);
-
-  // useEffect(() => {
-  //   const ele = wapperRef;
-  //   debugger;
-  // }, []);
-  // const onLayout = event => {
-  //   const { height } = event.nativeEvent.layout;
-  //   setWrapperHeight(height);
-  // };
-  const handelOnSnap = e => {
-    if (e.nativeEvent.id === "snap") {
-      setScrollEnabled(true);
+  const [deltaY] = useState(new Animated.Value(Screen.height - CARD_HEIGHT));
+  const [wrapperHeight, setWrapperHeight] = useState(
+    Screen.height - CARD_HEIGHT
+  );
+  const onLayout = event => {
+    const { height } = event.nativeEvent.layout;
+    const totalSnapPoints = Math.floor((height - Screen.height) / CARD_HEIGHT);
+    for (let i = 0; i <= totalSnapPoints; i++) {
+      let snapPoint = (i + 1) * CARD_HEIGHT;
+      if (snapPoint) {
+        snapPoint -= 48;
+      }
+      otherSnapPoints.push({ y: -snapPoint });
     }
+    setWrapperHeight(height);
   };
-  // const handelOnSnap = e => {
-  //   console.log(e);
-  // };
+
   return (
     <View style={styles.container}>
       <Interactable.View
@@ -48,15 +60,15 @@ const MapPanel = () => {
           right: 0,
           zIndex: 9,
           opacity: deltaY.interpolate({
-            inputRange: [48, Screen.height - 100],
+            inputRange: [HEADER_HEIGHT, Screen.height - CARD_HEIGHT],
             outputRange: [1, 0],
             extrapolateLeft: "clamp"
           }),
           transform: [
             {
               translateY: deltaY.interpolate({
-                inputRange: [48, Screen.height - 100],
-                outputRange: [0, -100],
+                inputRange: [HEADER_HEIGHT, Screen.height - CARD_HEIGHT],
+                outputRange: [0, -CARD_HEIGHT],
                 // extrapolateLeft: "clamp"
                 extrapolateLeft: "clamp"
               })
@@ -70,18 +82,13 @@ const MapPanel = () => {
       <View style={[styles.panelContainer]} pointerEvents={"box-none"}>
         <Interactable.View
           verticalOnly={true}
-          onSnap={handelOnSnap}
-          // onDrag={handelDrag}
           snapPoints={[
-            { y: 48, id: "snap" },
-            // { y: Screen.height - 300 },
-            { y: Screen.height - 100 }
+            { y: HEADER_HEIGHT },
+            ...otherSnapPoints,
+            { y: Screen.height - CARD_HEIGHT }
           ]}
-          onDrag={e => {
-            console.log("drag", e.nativeEvent);
-          }}
-          boundaries={{ top: 48 }}
-          initialPosition={{ y: Screen.height - 100 }}
+          boundaries={{ top: -wrapperHeight }}
+          initialPosition={{ y: Screen.height - CARD_HEIGHT }}
           animatedValueY={deltaY}
         >
           <Animated.View
@@ -89,39 +96,25 @@ const MapPanel = () => {
               ...StyleSheet.absoluteFill,
               backgroundColor: "#f7f5ee",
               opacity: deltaY.interpolate({
-                inputRange: [48, Screen.height - 100],
+                inputRange: [HEADER_HEIGHT, Screen.height - CARD_HEIGHT],
                 outputRange: [1, 0]
               })
             }}
           />
-          <View
-            style={[
-              styles.panel
-              // { height: wrapperHeight }
-            ]}
-          >
-            <View
-            // scrollEnabled={scrollEnabled}
-            // onScroll={event => {
-            //   if (event.nativeEvent.contentOffset.y < -10) {
-            //     console.log(event.nativeEvent.contentOffset.y);
-            //     setScrollEnabled(false);
-            //   }
-            // }}
-            // scrollEventThrottle={400}
-            // onLayout={onLayout}
-            >
-              {Array(10)
-                .fill("")
-                .map((v, key) => (
+          <View style={[styles.panel, { height: wrapperHeight }]}>
+            <View onLayout={onLayout}>
+              {!!cards &&
+                cards.map((v, key) => (
                   <View
                     key={key}
                     style={{
-                      height: 150,
+                      height: CARD_HEIGHT - 16,
                       backgroundColor: "#fff",
                       margin: 8
                     }}
-                  />
+                  >
+                    <Text>{v.title}</Text>
+                  </View>
                 ))}
             </View>
           </View>
@@ -144,17 +137,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0
-  },
-  panel: {
-    height: Screen.height + 300
-    // padding: 20,
-    // backgroundColor: "#f7f5eee8"
-    // borderTopLeftRadius: 20,
-    // borderTopRightRadius: 20,
-    // shadowColor: "black",
-    // shadowOffset: { width: 0, height: 0 },
-    // shadowRadius: 5,
-    // shadowOpacity: 0.4
   },
   map: {
     height: Screen.height,

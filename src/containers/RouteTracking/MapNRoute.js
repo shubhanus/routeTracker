@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
-import MapView from 'react-native-maps';
-import markerImage from '../../assets/images/car.png';
+import React, { useMemo } from "react";
+import { Dimensions, StyleSheet, ImageBackground } from "react-native";
+import MapView from "react-native-maps";
+import markerImage from "../../assets/images/car.png";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
 
 const LATITUDE_DELTA = 3;
@@ -15,9 +15,9 @@ const MapNRoute = ({ route }) => {
       latitude: route[route.length - 1].latitude,
       longitude: route[route.length - 1].longitude,
       latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA
     }),
-    [route],
+    [route]
   );
 
   return (
@@ -32,11 +32,20 @@ const MapNRoute = ({ route }) => {
     >
       <MapView.Marker
         // title={marker.key}
-        image={markerImage}
+        // icon={markerImage}
+        // image={}
         rotation={route[route.length - 1].hd}
         // key={marker.key}
         coordinate={route[route.length - 1]}
-      />
+      >
+        <ImageBackground
+          source={markerImage}
+          style={{
+            width: width * 0.05,
+            height: width * 0.075
+          }}
+        />
+      </MapView.Marker>
       <MapView.Polyline
         coordinates={route}
         strokeWidth={1}
@@ -50,8 +59,8 @@ const styles = StyleSheet.create({
   map: {
     // ...StyleSheet.absoluteFill,
     width,
-    height,
-  },
+    height
+  }
 });
 
 export default MapNRoute;
