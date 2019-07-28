@@ -1,12 +1,19 @@
-import React, { useEffect, useRef } from "react";
-import { StyleSheet, ImageBackground, Dimensions } from "react-native";
-import MapView from "react-native-maps";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  StyleSheet,
+  ImageBackground,
+  Dimensions,
+  Platform
+} from "react-native";
+import MapView, { AnimatedRegion } from "react-native-maps";
 import markerImage from "../../assets/images/car.png";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "./Map";
 
 const { width, height } = Dimensions.get("window");
 const MapNRoute = ({ route, initialRegion, mapReadyCallback }) => {
   const mapRef = useRef(null);
+  const markerRef = useRef(null);
+  const [coordinate] = useState(new AnimatedRegion());
 
   useEffect(() => {
     // whenever route will change region will change
@@ -19,6 +26,21 @@ const MapNRoute = ({ route, initialRegion, mapReadyCallback }) => {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA
       });
+      if (Platform.OS === "android") {
+        if (markerRef) {
+          markerRef.current._component.animateMarkerToCoordinate(
+            { latitude: lastCords.latitude, longitude: lastCords.longitude },
+            500
+          );
+        }
+      } else {
+        coordinate
+          .timing({
+            latitude: lastCords.latitude,
+            longitude: lastCords.longitude
+          })
+          .start();
+      }
     }
   }, [route]);
 
@@ -31,12 +53,13 @@ const MapNRoute = ({ route, initialRegion, mapReadyCallback }) => {
       ref={mapRef}
     >
       {!!route && !!route.length && (
-        <MapView.Marker
+        <MapView.Marker.Animated
+          ref={markerRef}
           rotation={route[route.length - 1].hd}
-          coordinate={route[route.length - 1]}
+          coordinate={coordinate}
         >
           <ImageBackground source={markerImage} style={styles.markerImage} />
-        </MapView.Marker>
+        </MapView.Marker.Animated>
       )}
       {!!route && !!route.length && (
         <MapView.Polyline
