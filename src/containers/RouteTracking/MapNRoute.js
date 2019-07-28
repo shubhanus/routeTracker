@@ -48,7 +48,7 @@ const MapNRoute = ({ route }) => {
       </MapView.Marker>
       <MapView.Polyline
         coordinates={route}
-        strokeWidth={1}
+        strokeWidth={2}
         fillColor="rgb(4, 237, 36)"
       />
     </MapView>
