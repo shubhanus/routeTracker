@@ -1,38 +1,51 @@
-import React, { useMemo } from "react";
-import { Dimensions, StyleSheet, ImageBackground } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { StyleSheet, ImageBackground, Dimensions } from "react-native";
 import MapView from "react-native-maps";
 import markerImage from "../../assets/images/car.png";
+import { LATITUDE_DELTA, LONGITUDE_DELTA } from "./Map";
 
 const { width, height } = Dimensions.get("window");
-const ASPECT_RATIO = width / height;
+const MapNRoute = ({ route, initialRegion, mapReadyCallback }) => {
+  const mapRef = useRef(null);
 
-const LATITUDE_DELTA = 3;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-
-const MapNRoute = ({ route }) => {
-  const initialRegion = useMemo(
-    () => ({
-      latitude: route[route.length - 1].latitude,
-      longitude: route[route.length - 1].longitude,
-      latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA
-    }),
-    [route]
-  );
+  useEffect(() => {
+    // whenever route will change region will change
+    // to keep marker in center
+    if (route.length) {
+      const lastCords = route[route.length - 1];
+      mapRef.current.animateToRegion({
+        latitude: lastCords.latitude,
+        longitude: lastCords.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA
+      });
+    }
+  }, [route]);
 
   return (
-    <MapView provider="google" style={styles.map} initialRegion={initialRegion}>
-      <MapView.Marker
-        rotation={route[route.length - 1].hd}
-        coordinate={route[route.length - 1]}
-      >
-        <ImageBackground source={markerImage} style={styles.markerImage} />
-      </MapView.Marker>
-      <MapView.Polyline
-        coordinates={route}
-        strokeWidth={2}
-        fillColor="rgb(4, 237, 36)"
-      />
+    <MapView
+      provider="google"
+      style={styles.map}
+      initialRegion={initialRegion}
+      onMapReady={mapReadyCallback}
+      ref={mapRef}
+    >
+      {!!route && !!route.length && (
+        <MapView.Marker
+          rotation={route[route.length - 1].hd}
+          coordinate={route[route.length - 1]}
+        >
+          <ImageBackground source={markerImage} style={styles.markerImage} />
+        </MapView.Marker>
+      )}
+      {!!route && !!route.length && (
+        <MapView.Polyline
+          coordinates={route}
+          strokeWidth={2}
+          fillColor="rgb(4, 237, 36)"
+          strokeColor="rgb(4, 237, 36)"
+        />
+      )}
     </MapView>
   );
 };
