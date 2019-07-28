@@ -1,11 +1,11 @@
-import React from 'react';
-import MapNRoute from './MapNRoute';
-import data from '../../../data.json';
+import React from "react";
+import MapNRoute from "./MapNRoute";
+import data from "../../../data.json";
 
 const route = data.map(({ loc: { coordinates, hd } }) => ({
   hd,
   latitude: coordinates[0],
-  longitude: coordinates[1],
+  longitude: coordinates[1]
 }));
 
 const Map = () => {

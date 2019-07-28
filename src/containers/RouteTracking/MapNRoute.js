@@ -48,7 +48,7 @@ const MapNRoute = ({ route }) => {
 
 const styles = StyleSheet.create({
   map: {
-    ...StyleSheet.absoluteFill,
+    // ...StyleSheet.absoluteFill,
     width,
     height,
   },

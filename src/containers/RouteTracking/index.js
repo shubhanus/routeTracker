@@ -1,193 +1,165 @@
-/* eslint-disable react-native/no-inline-styles */
-import React, { useState } from 'react';
-import { StyleSheet, View, Dimensions, Image, Text } from 'react-native';
-import Animated from 'react-native-reanimated';
-import Interactable from './Interactable';
-import SnippetView from '../../components/SnippetView';
-import data from '../../../data.json';
-import MapNRoute from './MapNRoute.js';
-import AppHeader from '../../components/AppHeader.js';
+import React, { useRef, useState, useEffect } from "react";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  Image,
+  Text,
+  Animated,
+  ScrollView
+} from "react-native";
+import Interactable from "react-native-interactable";
+import AppHeader from "../../components/AppHeader";
+import Map from "./Map";
 
 const Screen = {
-  width: Dimensions.get('window').width,
-  height: Dimensions.get('window').height - 75,
+  width: Dimensions.get("window").width,
+  height: Dimensions.get("window").height - 75
 };
 
-const cards = [
-  {
-    title: 'Title',
-    id: '1',
-  },
-  {
-    title: 'Title',
-    id: '2',
-  },
-  {
-    title: 'Title',
-    id: '3',
-  },
-  {
-    title: 'Title',
-    id: '4',
-  },
-  {
-    title: 'Title',
-    id: '5',
-  },
-  {
-    title: 'Title',
-    id: '6',
-  },
-  {
-    title: 'Title',
-    id: '7',
-  },
-  {
-    title: 'Title',
-    id: '8',
-  },
-  {
-    title: 'Title',
-    id: '9',
-  },
-  {
-    title: 'Title',
-    id: '10',
-  },
-  {
-    title: 'Title',
-    id: '11',
-  },
-];
-
-export default () => {
+const MapPanel = () => {
   const [deltaY] = useState(new Animated.Value(Screen.height - 100));
-  const [scrollEnabled, setScrollEnable] = useState(false);
+  const [scrollEnabled, setScrollEnabled] = useState(false);
+  // const [wrapperHeight, setWrapperHeight] = useState("auto");
+  // const wapperRef = useRef(null);
+
+  // useEffect(() => {
+  //   const ele = wapperRef;
+  //   debugger;
+  // }, []);
+  // const onLayout = event => {
+  //   const { height } = event.nativeEvent.layout;
+  //   setWrapperHeight(height);
+  // };
+  const handelOnSnap = e => {
+    if (e.nativeEvent.id === "snap") {
+      setScrollEnabled(true);
+    }
+  };
+  // const handelOnSnap = e => {
+  //   console.log(e);
+  // };
   return (
-    <>
-      <Animated.View style={[styles.header]}>
-        <AppHeader title="Test" />
-      </Animated.View>
-      <View style={styles.container}>
-        <View style={[styles.panelContainer]} pointerEvents={'box-none'}>
-          {/* <Animated.View
-            pointerEvents={'box-none'}
-            style={[
-              styles.panelContainer,
-              {
-                backgroundColor: 'black',
-                // opacity: deltaY.interpolate({
-                //   inputRange: [0, 50],
-                //   outputRange: [0.5, 0],
-                //   extrapolateRight: 'clamp',
-                // }),
-              },
-            ]}
-          /> */}
-          <Interactable.View
-            verticalOnly={true}
-            onSnap={() => {
-              // setScrollEnable(true);
+    <View style={styles.container}>
+      <Interactable.View
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          zIndex: 9,
+          opacity: deltaY.interpolate({
+            inputRange: [48, Screen.height - 100],
+            outputRange: [1, 0],
+            extrapolateLeft: "clamp"
+          }),
+          transform: [
+            {
+              translateY: deltaY.interpolate({
+                inputRange: [48, Screen.height - 100],
+                outputRange: [0, -100],
+                // extrapolateLeft: "clamp"
+                extrapolateLeft: "clamp"
+              })
+            }
+          ]
+        }}
+      >
+        <AppHeader title="Test" deltaY={deltaY} />
+      </Interactable.View>
+      <Map />
+      <View style={[styles.panelContainer]} pointerEvents={"box-none"}>
+        <Interactable.View
+          verticalOnly={true}
+          onSnap={handelOnSnap}
+          // onDrag={handelDrag}
+          snapPoints={[
+            { y: 48, id: "snap" },
+            // { y: Screen.height - 300 },
+            { y: Screen.height - 100 }
+          ]}
+          onDrag={e => {
+            console.log("drag", e.nativeEvent);
+          }}
+          boundaries={{ top: 48 }}
+          initialPosition={{ y: Screen.height - 100 }}
+          animatedValueY={deltaY}
+        >
+          <Animated.View
+            style={{
+              ...StyleSheet.absoluteFill,
+              backgroundColor: "#f7f5ee",
+              opacity: deltaY.interpolate({
+                inputRange: [48, Screen.height - 100],
+                outputRange: [1, 0]
+              })
             }}
-            snapPoints={[{ y: 64 }, { y: Screen.height - 100 }]}
-            // boundaries={{ top: 64 }}
-            initialPosition={{ y: Screen.height - 100 }}
-            animatedValueY={deltaY}
+          />
+          <View
+            style={[
+              styles.panel
+              // { height: wrapperHeight }
+            ]}
           >
-            <View style={[styles.panel]}>
-              <Animated.View
-                pointerEvents={'box-none'}
-                style={[
-                  styles.panelContainer,
-                  {
-                    backgroundColor: '#ddd',
-                    opacity: deltaY.interpolate({
-                      inputRange: [64, Screen.height - 100],
-                      outputRange: [1, 0],
-                      extrapolateRight: 'clamp',
-                    }),
-                  },
-                ]}
-              />
-              <SnippetView
-                pointerEvents="box-none"
-                scrollEnabled={false}
-                cards={cards}
-              />
+            <View
+            // scrollEnabled={scrollEnabled}
+            // onScroll={event => {
+            //   if (event.nativeEvent.contentOffset.y < -10) {
+            //     console.log(event.nativeEvent.contentOffset.y);
+            //     setScrollEnabled(false);
+            //   }
+            // }}
+            // scrollEventThrottle={400}
+            // onLayout={onLayout}
+            >
+              {Array(10)
+                .fill("")
+                .map((v, key) => (
+                  <View
+                    key={key}
+                    style={{
+                      height: 150,
+                      backgroundColor: "#fff",
+                      margin: 8
+                    }}
+                  />
+                ))}
             </View>
-          </Interactable.View>
-        </View>
+          </View>
+        </Interactable.View>
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#efefef',
+    // justifyContent: "center",
+    // alignItems: "center",
+    backgroundColor: "#efefef"
   },
   panelContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     bottom: 0,
     left: 0,
-    right: 0,
+    right: 0
   },
   panel: {
-    height: Screen.height,
-    // paddingTop: 20,
-    // backgroundColor: '#f7f5eee8',
+    height: Screen.height + 300
+    // padding: 20,
+    // backgroundColor: "#f7f5eee8"
     // borderTopLeftRadius: 20,
     // borderTopRightRadius: 20,
-    // shadowColor: '#000000',
+    // shadowColor: "black",
     // shadowOffset: { width: 0, height: 0 },
     // shadowRadius: 5,
-    // shadowOpacity: 0.4,
+    // shadowOpacity: 0.4
   },
-  panelHeader: {
-    alignItems: 'center',
-  },
-  panelHandle: {
-    width: 40,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#00000040',
-    marginBottom: 10,
-  },
-  panelTitle: {
-    fontSize: 27,
-    height: 35,
-  },
-  panelSubtitle: {
-    fontSize: 14,
-    color: 'gray',
-    height: 30,
-    marginBottom: 10,
-  },
-  panelButton: {
-    padding: 20,
-    borderRadius: 10,
-    backgroundColor: '#318bfb',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  panelButtonTitle: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  photo: {
-    width: Screen.width - 40,
-    height: 225,
-    marginTop: 30,
-  },
-  header: {
-    marginTop: 20,
-    height: 64,
-    zIndex: 9,
-    ...StyleSheet.absoluteFill,
-  },
+  map: {
+    height: Screen.height,
+    width: Screen.width
+  }
 });
+
+export default MapPanel;
