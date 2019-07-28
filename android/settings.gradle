@@ -1,0 +1,3 @@
+rootProject.name = 'routeTracker'
+
+include ':app'
