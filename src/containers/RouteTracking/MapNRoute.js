@@ -26,13 +26,7 @@ const MapNRoute = ({ route }) => {
         rotation={route[route.length - 1].hd}
         coordinate={route[route.length - 1]}
       >
-        <ImageBackground
-          source={markerImage}
-          style={{
-            width: width * 0.05,
-            height: width * 0.075
-          }}
-        />
+        <ImageBackground source={markerImage} style={styles.markerImage} />
       </MapView.Marker>
       <MapView.Polyline
         coordinates={route}
@@ -47,6 +41,10 @@ const styles = StyleSheet.create({
   map: {
     width,
     height
+  },
+  markerImage: {
+    width: width * 0.05,
+    height: width * 0.075
   }
 });
 

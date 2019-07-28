@@ -26,12 +26,20 @@ const Screen = {
 };
 
 const otherSnapPoints = []; // will be used to snap drag
+
 const MapPanel = () => {
   const [deltaY] = useState(new Animated.Value(Screen.height - CARD_HEIGHT));
   const [wrapperHeight, setWrapperHeight] = useState(
     Screen.height - CARD_HEIGHT
   );
 
+  /**
+   * This method called after snippet card renders 
+   * Get it's height and set it to state
+   * Height will be aplied to draggeble panel
+   * Calculate snap points and update otherSnapPoints array
+   * @param {object} event react native event
+   */
   const onLayout = event => {
     const { height } = event.nativeEvent.layout;
     const totalSnapPoints = Math.floor((height - Screen.height) / CARD_HEIGHT);
