@@ -11,6 +11,7 @@ import {
 import Interactable from "react-native-interactable";
 import AppHeader from "../../components/AppHeader";
 import Map from "./Map";
+import TouchableIcon from "../../components/TouchableIcon";
 
 const CARD_HEIGHT = 150; // can be fixed or calculated on layout
 const HEADER_HEIGHT = 48; // based on header height
@@ -23,8 +24,8 @@ const cards = [
   { title: "6" },
   { title: "7" },
   { title: "8" },
-  { title: "9" }
-  // { title: "10" }
+  { title: "9" },
+  { title: "10" }
 ];
 
 const Screen = {
@@ -87,7 +88,6 @@ const MapPanel = () => {
             ...otherSnapPoints,
             { y: Screen.height - CARD_HEIGHT }
           ]}
-          boundaries={{ top: -wrapperHeight }}
           initialPosition={{ y: Screen.height - CARD_HEIGHT }}
           animatedValueY={deltaY}
         >
@@ -101,7 +101,9 @@ const MapPanel = () => {
               })
             }}
           />
-          <View style={[styles.panel, { height: wrapperHeight }]}>
+          <View
+            style={[styles.panel, { height: wrapperHeight + Screen.height }]}
+          >
             <View onLayout={onLayout}>
               {!!cards &&
                 cards.map((v, key) => (
