@@ -21,21 +21,9 @@ const MapNRoute = ({ route }) => {
   );
 
   return (
-    <MapView
-      provider="google"
-      style={styles.map}
-      // scrollEnabled={false}
-      // zoomEnabled={false}
-      // pitchEnabled={false}
-      // rotateEnabled={false}
-      initialRegion={initialRegion}
-    >
+    <MapView provider="google" style={styles.map} initialRegion={initialRegion}>
       <MapView.Marker
-        // title={marker.key}
-        // icon={markerImage}
-        // image={}
         rotation={route[route.length - 1].hd}
-        // key={marker.key}
         coordinate={route[route.length - 1]}
       >
         <ImageBackground
@@ -57,7 +45,6 @@ const MapNRoute = ({ route }) => {
 
 const styles = StyleSheet.create({
   map: {
-    // ...StyleSheet.absoluteFill,
     width,
     height
   }
