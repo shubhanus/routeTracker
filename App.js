@@ -6,20 +6,14 @@
  * @flow
  */
 
-import React, { Component } from "react";
-import { SafeAreaView, View } from "react-native";
-import StatusBar from "./src/components/CustomStatusBar";
-import Map from "./src/containers/RouteTracking/Map";
+import React from "react";
+import { SafeAreaView } from "react-native";
 import RouteTracking from "./src/containers/RouteTracking";
 
 export default () => {
   return (
-    <>
-      {/* <StatusBar barStyle="dark-content" /> */}
-      <SafeAreaView style={{ flex: 1 }}>
-        {/* <Map /> */}
-        <RouteTracking />
-      </SafeAreaView>
-    </>
+    <SafeAreaView style={{ flex: 1 }}>
+      <RouteTracking />
+    </SafeAreaView>
   );
 };
