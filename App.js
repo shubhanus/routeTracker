@@ -6,15 +6,14 @@
  * @flow
  */
 
-import React from "react";
-import { SafeAreaView } from "react-native";
-import RouteTracking from "./src/containers/RouteTracking";
-import StatusBar from "./src/components/CustomStatusBar";
+import React from 'react';
+import { SafeAreaView } from 'react-native';
+import RouteTracking from './src/containers/RouteTracking';
+// eslint-disable-next-line no-unused-vars
+import StatusBar from './src/components/CustomStatusBar';
 
-export default () => {
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <RouteTracking />
-    </SafeAreaView>
-  );
-};
+export default () => (
+  <SafeAreaView style={{ flex: 1 }}>
+    <RouteTracking />
+  </SafeAreaView>
+);

@@ -1,10 +1,9 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { Dimensions } from "react-native";
-import { AnimatedRegion } from "react-native-maps";
-import MapNRoute from "./MapNRoute";
-import data from "../../../data.json";
+import React, { useState, useEffect } from 'react';
+import { Dimensions } from 'react-native';
+import MapNRoute from './MapNRoute';
+import data from '../../../data.json';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
 
@@ -20,11 +19,11 @@ const initialRegion = {
   latitude: data[0].loc.coordinates[0],
   longitude: data[0].loc.coordinates[1],
   latitudeDelta: LATITUDE_DELTA,
-  longitudeDelta: LONGITUDE_DELTA
+  longitudeDelta: LONGITUDE_DELTA,
 };
 
 let mapRenderd = false; // flag for map render callback
-let lastHd = data[0].hd;
+const lastHd = data[0].hd;
 const Map = () => {
   const [route, setRoute] = useState([]);
 
@@ -38,11 +37,12 @@ const Map = () => {
       clearInterval(intervel);
       return;
     }
-    for (i = lastIndex; i < data.length; i++) {
+    // eslint-disable-next-line no-plusplus
+    for (let i = lastIndex; i < data.length; i++) {
       const {
         loc: { coordinates },
         hd,
-        timestamp
+        timestamp,
       } = data[i];
       // initiate lastTs with start value (lastIndex)
       if (lastTs === 0) {
@@ -57,7 +57,7 @@ const Map = () => {
       nextRoute.push({
         hd: hd || lastHd, // for handling hd undefined
         latitude: coordinates[0],
-        longitude: coordinates[1]
+        longitude: coordinates[1],
       });
     }
     setRoute(route.concat(nextRoute));
@@ -68,14 +68,17 @@ const Map = () => {
     getNextSet();
   };
 
-  useEffect(() => {
-    if (mapRenderd) {
-      intervel = setInterval(getNextSet, 1500);
-    }
-    return () => {
-      clearInterval(intervel);
-    };
-  }, [route]);
+  useEffect(
+    () => {
+      if (mapRenderd) {
+        intervel = setInterval(getNextSet, 1500);
+      }
+      return () => {
+        clearInterval(intervel);
+      };
+    },
+    [route],
+  );
 
   return (
     <MapNRoute

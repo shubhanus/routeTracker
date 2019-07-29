@@ -9,18 +9,17 @@ const TouchableIcon = ({
   color = '#fff',
   style = {},
   ...rest
-}) => {
-  return (
-    <TouchableOpacity {...rest} style={[styles.conainer, style]}>
-      <Icon name={name} size={24} color={color} />
-    </TouchableOpacity>
-  );
-};
+}) => (
+  <TouchableOpacity {...rest} style={[styles.conainer, style]}>
+    <Icon name={name} size={size} color={color} />
+  </TouchableOpacity>
+);
 
 TouchableIcon.propTypes = {
   name: PropTypes.string.isRequired,
   size: PropTypes.number,
   color: PropTypes.string,
+  style: PropTypes.object,
 };
 
 const styles = StyleSheet.create({
